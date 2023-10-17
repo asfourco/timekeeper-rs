@@ -1,7 +1,10 @@
+
 mod args;
+
 
 use args::Args;
 use clap::Parser;
+use timekeeper_rs::calculator;
 
 fn main() {
     let args = Args::parse();
@@ -12,5 +15,9 @@ fn main() {
     let _max_hours = args.max_hours.unwrap_or(0);
     let _hours_per_day = args.hours_per_day.unwrap_or(8.0);
 
-
+    let _burn_rate = calculator::calculate_current_month_burn_rate(
+        _rate,
+        _hours_per_day,
+        _hours_worked,
+    );
 }
