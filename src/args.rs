@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
 
-
 #[derive(Parser, Debug)]
 #[clap(version, about)]
 pub struct Arguments {
@@ -39,6 +38,5 @@ pub enum SubCommand {
         /// Specify hours per day
         #[arg(long = "hours_per_day", default_value = "8.0")]
         hours_per_day: f64,
-    }
-
+    },
 }

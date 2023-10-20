@@ -1,4 +1,3 @@
-
 pub mod util {
     pub fn format_accounting_format(number: f64) -> String {
         let formatted = format!("{:.*}", 2, number);
@@ -25,8 +24,8 @@ pub mod util {
 }
 
 pub mod calculator {
-    use chrono::{Datelike, Duration, Local, NaiveDate};
     use crate::util::format_accounting_format;
+    use chrono::{Datelike, Duration, Local, NaiveDate};
 
     pub fn calculate_current_month_burn_rate(
         pay_rate: f64,
@@ -62,11 +61,20 @@ pub mod calculator {
         let remaining_hours_percentage: f64 =
             (remaining_working_hours / total_working_hours) * 100.0;
 
-        print!("Your current burn rate (percentage) is: {:.2} ", burn_rate_percentage);
+        print!(
+            "Your current burn rate (percentage) is: {:.2} ",
+            burn_rate_percentage
+        );
         if burn_rate_percentage < 1.0 {
-            print!("(You are working {:.2} % less than you should be)", (1.0 - burn_rate_percentage) * 100.0);
+            print!(
+                "(You are working {:.2} % less than you should be)",
+                (1.0 - burn_rate_percentage) * 100.0
+            );
         } else if burn_rate_percentage > 1.0 {
-            print!("(You are working {:.2} % more than you should be)", (burn_rate_percentage - 1.0) * 100.0);
+            print!(
+                "(You are working {:.2} % more than you should be)",
+                (burn_rate_percentage - 1.0) * 100.0
+            );
         } else {
             print!("(You are working exactly as you should be)");
         }
@@ -83,7 +91,6 @@ pub mod calculator {
             "You have accumulated $ {} so far this month",
             format_accounting_format(total_accumulated)
         );
-
     }
 
     pub fn get_working_days_in_current_month() -> u32 {
@@ -116,20 +123,22 @@ pub mod calculator {
 
     pub fn get_remaining_working_days_in_month() -> u32 {
         let today = Local::now().naive_local().date();
-        let days_passed = get_working_days_between(get_start_day_of_month(today.month(), today.year()), today);
+        let days_passed =
+            get_working_days_between(get_start_day_of_month(today.month(), today.year()), today);
         let working_days = get_working_days_in_current_month();
-
 
         let remaining_working_days = working_days - days_passed;
         remaining_working_days
     }
 
-    pub fn get_working_days_between(start_date: NaiveDate, end_date: NaiveDate) -> u32{
+    pub fn get_working_days_between(start_date: NaiveDate, end_date: NaiveDate) -> u32 {
         let mut current_date = start_date.clone();
         let mut working_days: u32 = 0;
 
         while current_date <= end_date {
-            if current_date.weekday() != chrono::Weekday::Sat && current_date.weekday() != chrono::Weekday::Sun {
+            if current_date.weekday() != chrono::Weekday::Sat
+                && current_date.weekday() != chrono::Weekday::Sun
+            {
                 working_days += 1;
             }
             current_date = current_date + Duration::days(1);
@@ -142,21 +151,20 @@ pub mod calendar {
 
     use crate::{calculator, util::format_accounting_format};
     use chrono::{Datelike, Local};
-    pub fn print_working_days_in_calendar(year: u32, hours_per_day: f64, rate: Option<f64>){
+    pub fn print_working_days_in_calendar(year: u32, hours_per_day: f64, rate: Option<f64>) {
         /*
-        Generate rust code for the following:
-       1. for every month in year, get the start date and end date. Using the start date and end date, get the number of working days in the month by calling get_working_days_between()
-       2. if year is not defined then year = current year
-       3. print the working days for each month in the year and print the total working hours for the month by multiplying the working days with hours_per_day
-       4. finally, print the total number of working days and the total working hours in the year
-         */
+         Generate rust code for the following:
+        1. for every month in year, get the start date and end date. Using the start date and end date, get the number of working days in the month by calling get_working_days_between()
+        2. if year is not defined then year = current year
+        3. print the working days for each month in the year and print the total working hours for the month by multiplying the working days with hours_per_day
+        4. finally, print the total number of working days and the total working hours in the year
+          */
 
         let mut calendar_year = year as i32;
         let today = Local::now().naive_local().date();
         if calendar_year == 0 {
             calendar_year = today.year();
         }
-
 
         let mut total_working_days: u32 = 0;
         let mut total_working_hours: f64 = 0.0;
@@ -168,19 +176,30 @@ pub mod calendar {
             let working_hours_in_month = working_days_in_month as f64 * hours_per_day;
             total_working_days += working_days_in_month;
             total_working_hours += working_hours_in_month;
-            print!("Month: {} \t Working Days: {} \t Working Hours: {}", month, working_days_in_month, working_hours_in_month);
+            print!(
+                "Month: {} \t Working Days: {} \t Working Hours: {}",
+                month, working_days_in_month, working_hours_in_month
+            );
             if rate.is_some() {
                 let total_accumulated = rate.unwrap() * working_hours_in_month;
-                print!("\t Total Accumulated: $ {}", format_accounting_format(total_accumulated));
+                print!(
+                    "\t Total Accumulated: $ {}",
+                    format_accounting_format(total_accumulated)
+                );
             }
             println!();
         }
 
-        print!("Total Working Days: {} \t Total Working Hours: {}", total_working_days, total_working_hours);
+        print!(
+            "Total Working Days: {} \t Total Working Hours: {}",
+            total_working_days, total_working_hours
+        );
         if rate.is_some() {
-            print!(" \t Total for Year: $ {}", format_accounting_format(rate.unwrap() * total_working_hours));
+            print!(
+                " \t Total for Year: $ {}",
+                format_accounting_format(rate.unwrap() * total_working_hours)
+            );
         }
         println!();
     }
 }
-
