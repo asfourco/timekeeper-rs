@@ -1,62 +1,44 @@
-//! Command line arguments & help
-//!
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
-/// Command line tool for tracking work time
+
 #[derive(Parser, Debug)]
-#[command(
-    author,
-    version,
-    about,
-    long_about,
-    after_help(
-        "\
-Arguments:
+#[clap(version, about)]
+pub struct Arguments {
+    #[clap(subcommand)]
+    pub cmd: SubCommand,
 
-  <HOURS_WORKED>
-        Hours in one of the following formats:
+    #[arg(short, long, default_value = "0")]
+    pub verbosity: usize,
+}
 
-        H:M         h,fr        h.fr
+#[derive(Subcommand, Debug)]
+pub enum SubCommand {
+    BurnRate {
+        #[arg(short, long)]
+        billable_hours: f64,
 
-        H = hour    M = minute
-        h = hours  fr = fraction of an hour
-  <HOURLY_RATE>
-        Hourly payment rate as floating point number
+        #[arg(short, long)]
+        rate: f64,
 
-  <MAX_HOURS>
-        Maximum amount of work hours as integer number
-"
-    ),
-    help_template(
-        "\
-{before-help}{name} {version} - {about-with-newline}
-{usage-heading} {usage}
+        /// Override the maximum amount of hours for this month
+        #[arg(long = "max-hours")]
+        max_hours: Option<f64>,
 
-{all-args}{after-help}
-Homepage:
-    {homepage}
+        /// Specify hours per day
+        #[arg(long = "hours_per_day", default_value = "8.0")]
+        hours_per_day: f64,
+    },
+    Calendar {
+        #[arg(short, long)]
+        year: u32,
 
-License:
-    timekeeper-rs is under MIT license.
+        ///specify hourly rate
+        #[arg(short, long = "rate")]
+        rate: Option<f64>,
 
-Author:
-    {authors}"
-    )
-)]
-pub struct Args {
-    /// Hours worked so far this month
-    #[arg(long = "hours_worked")]
-    pub hours_worked: Option<f64>,
+        /// Specify hours per day
+        #[arg(long = "hours_per_day", default_value = "8.0")]
+        hours_per_day: f64,
+    }
 
-    ///specify hourly rate
-    #[arg(long = "rate")]
-    pub rate: Option<f64>,
-
-    /// Override the maximum amount of hours for this month
-    #[arg(long = "max-hours")]
-    pub max_hours: Option<u32>,
-
-    /// Specify hours per day
-    #[arg(long = "hours_per_day")]
-    pub hours_per_day: Option<f64>,
 }
