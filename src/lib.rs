@@ -23,6 +23,7 @@ pub mod util {
     }
 }
 
+
 pub mod calculator {
     use crate::util::format_accounting_format;
     use chrono::{Datelike, Duration, Local, NaiveDate};
@@ -35,13 +36,7 @@ pub mod calculator {
     ) {
         let mut burn_rate_hours: f64 = 0.0;
         let mut burn_rate_percentage: f64 = 0.0;
-        let mut total_working_hours: f64 = 0.0;
-
-        if max_hours.is_some() {
-            total_working_hours = max_hours.unwrap()
-        } else {
-            total_working_hours = get_working_hours_in_current_month(hours_per_day);
-        }
+        let total_working_hours: f64 = max_hours.unwrap_or(get_working_hours_in_current_month(hours_per_day));
 
         let remaining_working_days: f64 = get_remaining_working_days_in_month() as f64;
         let remaining_working_hours: f64 = total_working_hours - hours_to_date;
@@ -202,4 +197,43 @@ pub mod calendar {
         }
         println!();
     }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use chrono::{Duration, NaiveDate};
+    use crate::calculator::get_working_days_between;
+    use crate::util::format_accounting_format;
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+    #[test]
+    fn test_format_accounting() {
+        let number = 10000;
+        assert_eq!(format_accounting_format(number as f64), "10,000.00");
+    }
+
+    #[test]
+    fn test_get_working_days_between() {
+        let start = NaiveDate::from_ymd_opt(2021, 1, 1).expect("Invalid date");
+        let end = NaiveDate::from_ymd_opt(2021, 1, 15).expect("Invalid date");
+        assert_eq!(get_working_days_between(start, end), 11);
+    }
+
+    #[test]
+    fn test_get_first_day_of_month() {
+        let month =1;
+        let year = 2021;
+        let start = NaiveDate::from_ymd_opt(year, month, 1).expect("Invalid date");
+        assert_eq!(calculator::get_start_day_of_month(month, year), start);
+    }
+
+    #[test]
+    fn test_last_day_of_month() {
+        let month =1;
+        let year = 2021;
+        let end = NaiveDate::from_ymd_opt(year, month, 31).expect("Invalid date");
+        assert_eq!(calculator::get_last_day_of_month(month, year), end);
+    }
+
 }
