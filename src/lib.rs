@@ -186,12 +186,13 @@ pub mod calendar {
         }
 
         print!(
-            "Total Working Days: {} \t Total Working Hours: {}",
-            total_working_days, total_working_hours
+            "Total Working Days: {:.2} \t Total Working Hours: {:.2} \t Average Monthly hours: {:.2}\n",
+            total_working_days, total_working_hours, total_working_hours / 12.0
         );
         if rate.is_some() {
             print!(
-                " \t Total for Year: $ {}",
+                "Average Monthly Income $ {} \nTotal Income for Year: $ {}",
+                format_accounting_format((rate.unwrap() * total_working_hours) / 12.0),
                 format_accounting_format(rate.unwrap() * total_working_hours)
             );
         }
