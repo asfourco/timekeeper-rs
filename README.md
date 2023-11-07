@@ -79,4 +79,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 ## Support
-If you like this tool consider supporting me by buying me a coffee! https://bit.ly/3u6ex56
+If you like this tool, consider supporting me by buying me a coffee! https://bit.ly/3u6ex56
