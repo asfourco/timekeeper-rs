@@ -23,7 +23,6 @@ pub mod util {
     }
 }
 
-
 pub mod calculator {
     use crate::util::format_accounting_format;
     use chrono::{Datelike, Duration, Local, NaiveDate};
@@ -33,18 +32,32 @@ pub mod calculator {
         hours_per_day: f64,
         hours_to_date: f64,
         max_hours: Option<f64>,
+        days_off: Option<f64>,
     ) {
+        log::debug!("Calculating current month burn rate with params:");
+        log::debug!("pay_rate: {pay_rate:?}");
+        log::debug!("hours_per_day: {hours_per_day:?}");
+        log::debug!("hours_to_date: {hours_to_date:?}");
+        log::debug!("max_hours: {max_hours:?}");
+        log::debug!("days_off: {days_off:?}");
+
         let mut burn_rate_hours: f64 = 0.0;
         let mut burn_rate_percentage: f64 = 0.0;
-        let total_working_hours: f64 = max_hours.unwrap_or(get_working_hours_in_current_month(hours_per_day));
+        let total_working_hours: f64 =
+            max_hours.unwrap_or(get_working_hours_in_current_month(hours_per_day));
 
         let remaining_working_days: f64 = get_remaining_working_days_in_month() as f64;
         let remaining_working_hours: f64 = total_working_hours - hours_to_date;
         let total_accumulated: f64 = pay_rate * hours_to_date;
 
         if remaining_working_days > 0.0 {
-            burn_rate_hours = remaining_working_hours / remaining_working_days;
+            burn_rate_hours =
+                remaining_working_hours / (remaining_working_days - days_off.unwrap_or(0.0));
             println!("Your current burn rate (h/day) is: {:.2}", burn_rate_hours);
+            println!(
+                "Number of working days left in this month: {:.0}",
+                remaining_working_days
+            )
         } else {
             println!("You have no more working days left this month");
         }
@@ -146,6 +159,7 @@ pub mod calendar {
 
     use crate::{calculator, util::format_accounting_format};
     use chrono::{Datelike, Local};
+
     pub fn print_working_days_in_calendar(year: u32, hours_per_day: f64, rate: Option<f64>) {
         /*
          Generate rust code for the following:
@@ -154,6 +168,11 @@ pub mod calendar {
         3. print the working days for each month in the year and print the total working hours for the month by multiplying the working days with hours_per_day
         4. finally, print the total number of working days and the total working hours in the year
           */
+
+        log::debug!("Printing working days in calendar with params:");
+        log::debug!("year: {year:?}");
+        log::debug!("hours_per_day: {hours_per_day:?}");
+        log::debug!("rate: {rate:?}");
 
         let mut calendar_year = year as i32;
         let today = Local::now().naive_local().date();
@@ -200,12 +219,11 @@ pub mod calendar {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use chrono::{Duration, NaiveDate};
     use crate::calculator::get_working_days_between;
     use crate::util::format_accounting_format;
+    use chrono::{Duration, NaiveDate};
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
     #[test]
@@ -223,7 +241,7 @@ mod tests {
 
     #[test]
     fn test_get_first_day_of_month() {
-        let month =1;
+        let month = 1;
         let year = 2021;
         let start = NaiveDate::from_ymd_opt(year, month, 1).expect("Invalid date");
         assert_eq!(calculator::get_start_day_of_month(month, year), start);
@@ -231,10 +249,9 @@ mod tests {
 
     #[test]
     fn test_last_day_of_month() {
-        let month =1;
+        let month = 1;
         let year = 2021;
         let end = NaiveDate::from_ymd_opt(year, month, 31).expect("Invalid date");
         assert_eq!(calculator::get_last_day_of_month(month, year), end);
     }
-
 }

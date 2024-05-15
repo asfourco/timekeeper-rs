@@ -11,7 +11,8 @@ homepage = "https://github.com/asfourco/timekeeper-rs"
 chrono = "0.4.31"
 clap = { version = "4.4.2", features = ["derive"] }
 num-format = "0.4.4"
-
+log = "0.4.21"
+simple_logger = { version = "5.0.0", features = ["stderr"] }
 
 [dependencies.uuid]
 version = "1.4.1"
