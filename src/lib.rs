@@ -46,13 +46,14 @@ pub mod calculator {
         let total_working_hours: f64 =
             max_hours.unwrap_or(get_working_hours_in_current_month(hours_per_day));
 
-        let remaining_working_days: f64 = get_remaining_working_days_in_month() as f64;
+        let raw_remaining_working_days: f64 = get_remaining_working_days_in_month() as f64;
+        let remaining_working_days: f64 = raw_remaining_working_days - days_off.unwrap_or(0.0);
         let remaining_working_hours: f64 = total_working_hours - hours_to_date;
         let total_accumulated: f64 = pay_rate * hours_to_date;
 
         if remaining_working_days > 0.0 {
             burn_rate_hours =
-                remaining_working_hours / (remaining_working_days - days_off.unwrap_or(0.0));
+                remaining_working_hours / remaining_working_days;
             println!("Your current burn rate (h/day) is: {:.2}", burn_rate_hours);
             println!(
                 "Number of working days left in this month: {:.0}",
